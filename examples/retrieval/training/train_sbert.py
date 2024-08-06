@@ -28,7 +28,7 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
 #### /print debug information to stdout
 
 #### Download nfcorpus.zip dataset and unzip the dataset
-dataset = "nfcorpus"
+dataset = "hotpotqa"
 
 url = "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/{}.zip".format(dataset)
 out_dir = os.path.join(pathlib.Path(__file__).parent.absolute(), "datasets")
@@ -40,13 +40,13 @@ corpus, queries, qrels = GenericDataLoader(data_path).load(split="train")
 dev_corpus, dev_queries, dev_qrels = GenericDataLoader(data_path).load(split="dev")
 
 #### Provide any sentence-transformers or HF model
-model_name = "distilbert-base-uncased" 
-word_embedding_model = models.Transformer(model_name, max_seq_length=350)
-pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension())
-model = SentenceTransformer(modules=[word_embedding_model, pooling_model])
+model_name = "nq-distilbert-base-v1" 
+#word_embedding_model = models.Transformer(model_name, max_seq_length=350)
+#pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension())
+#model = SentenceTransformer(modules=[word_embedding_model, pooling_model])
 
 #### Or provide pretrained sentence-transformer model
-# model = SentenceTransformer("msmarco-distilbert-base-v3")
+model = SentenceTransformer("nq-distilbert-base-v1")
 
 retriever = TrainRetriever(model=model, batch_size=16)
 
