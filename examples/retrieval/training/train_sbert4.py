@@ -22,7 +22,7 @@ print(torch.__version__)
 print(sentence_transformers.__version__)
 
 
-sys.path.append(f'{os.getcwd()}/../../../../sentence_transformers_energydistance')
+#sys.path.append(f'{os.getcwd()}/../../../../sentence_transformers_energydistance')
 
 # Logging setup
 logging.basicConfig(format='%(asctime)s - %(message)s',
@@ -31,8 +31,8 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
                     handlers=[LoggingHandler()])
 
 # Dataset setup
-#dataset = "hotpotqa"
-dataset = "fever"
+dataset = "hotpotqa"
+#dataset = "fever"
 url = f"https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/{dataset}.zip"
 out_dir = os.path.join(pathlib.Path(__file__).parent.absolute(), "datasets")
 data_path = util.download_and_unzip(url, out_dir)
@@ -97,8 +97,11 @@ def subset_dev_set(queries, qrels, corpus, subset_fraction=0.2, seed=42):
 #subset_corpus, subset_queries, subset_qrels = create_subset(dev_corpus, dev_queries, dev_qrels)
 
 # SentenceTransformer model setup
-model_name = "distilbert-base-uncased_ED"
-model = SentenceTransformer("distilbert-base-uncased")
+#model_name = "distilbert-base-uncased_CosSim"
+#model = SentenceTransformer("distilbert-base-uncased")
+model_name = "snowflake-arctic-embed-m-v1.5_CosSim"
+model = SentenceTransformer("Snowflake/snowflake-arctic-embed-m-v1.5")
+
 model.to('cuda')
 print(f"Model device: {next(model.parameters()).device}")
 
@@ -115,7 +118,7 @@ ir_evaluator = retriever.load_ir_evaluator(dev_corpus, dev_queries, dev_qrels)
 # Hyperparameter optimization setup
 #learning_rates = [1e-5, 2e-5, 4e-5]
 #epochs_list = [1, 3, 5]
-learning_rates = [3e-5]
+learning_rates = [1e-5]
 epochs_list = [10]
 
 
@@ -153,8 +156,8 @@ for lr in learning_rates:
         train_loss = losses.MultipleNegativesRankingLoss(model=retriever.model)
         warmup_steps = int(len(train_samples) * num_epochs / retriever.batch_size * 0.1)
         #evaluation_steps = int(len(train_samples) // retriever.batch_size * 0.5)
-        model_save_path = os.path.join(pathlib.Path(__file__).parent.absolute(), "output", f"{model_name}-fever-lr{lr}-epochs{num_epochs}-temperature50_full_dev")
-        #model_save_path = os.path.join(pathlib.Path(__file__).parent.absolute(), "output", f"{model_name}-hotpotqa-lr{lr}-epochs{num_epochs}-temperature200")
+        #model_save_path = os.path.join(pathlib.Path(__file__).parent.absolute(), "output", f"{model_name}-fever-lr{lr}-epochs{num_epochs}-temperature100_full_dev")
+        model_save_path = os.path.join(pathlib.Path(__file__).parent.absolute(), "output", f"{model_name}-hotpotqa-lr{lr}-epochs{num_epochs}-temperature20_full_dev")
         os.makedirs(model_save_path, exist_ok=True)
 
         # Initialize EarlyStoppingCallback
