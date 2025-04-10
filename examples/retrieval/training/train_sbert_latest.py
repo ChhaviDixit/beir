@@ -49,10 +49,20 @@ dev_dataset = Dataset.from_list(dev_data)  # Convert to Hugging Face Dataset
 # SentenceTransformer model setup
 #model_name = "distilbert-base-uncased_ED"
 #model = SentenceTransformer("distilbert-base-uncased")
-model_name = "snowflake-arctic-embed-m-v1.5_CosSim"
-model = SentenceTransformer("Snowflake/snowflake-arctic-embed-m-v1.5")
+model_name = "snowflake-arctic-embed-m-v1.5_ED"
+#model = SentenceTransformer("Snowflake/snowflake-arctic-embed-m-v1.5")
 #model_name = "distilbert-base-uncased_CosSim_test"
 #model = SentenceTransformer("distilbert-base-uncased")
+#model_save_path = os.path.join(pathlib.Path(__file__).parent.absolute(), "output", f"{model_name}-hotpotqa-lr{lr}-epochs{num_epochs}-temperature20_full_dev")
+model_save_path = os.path.join(pathlib.Path(__file__).parent.absolute(), "output", f"{model_name}-hotpotqa-lr1e-5-epochs10-temperature20_full_dev")
+trainer_state_path = os.path.join(save_dir, "trainer_state.json")
+os.makedirs(model_save_path, exist_ok=True)
+if os.path.exists(model_save_path):
+    model = SentenceTransformer(model_save_path)  # Load from last checkpoint
+else:
+    model = SentenceTransformer("Snowflake/snowflake-arctic-embed-m-v1.5")
+
+
 model.to(device)
 print(f"Model device: {next(model.parameters()).device}")
 
@@ -96,7 +106,7 @@ ir_evaluator = InformationRetrievalEvaluator(
 
 
 # Hyperparameter setup
-learning_rates = [3e-5]
+learning_rates = [1e-5]
 epochs_list = [10]
 
 # Custom callback to print loss during training
@@ -122,7 +132,6 @@ class BestModelCallback(TrainerCallback):
             state.model.save(self.model_save_path)
             print(f"New best model saved with {self.metric} = {current_score:.4f}")
 
-
 # Hyperparameter tuning loop
 for lr in learning_rates:
     for num_epochs in epochs_list:
@@ -132,7 +141,7 @@ for lr in learning_rates:
         train_loss = losses.MultipleNegativesRankingLoss(model=model)
         warmup_steps = int(len(train_dataset) * num_epochs / 16 * 0.1)
         model_save_path = os.path.join(pathlib.Path(__file__).parent.absolute(), "output", f"{model_name}-hotpotqa-lr{lr}-epochs{num_epochs}-temperature20_full_dev")
-        os.makedirs(model_save_path, exist_ok=True)
+        #os.makedirs(model_save_path, exist_ok=True)
 
         # Initialize the BestModelCallback
         #best_model_callback = BestModelCallback(evaluator=ir_evaluator, model_save_path=model_save_path, metric="ndcg_at_10")
@@ -148,7 +157,7 @@ for lr in learning_rates:
             evaluation_strategy="epoch",  # Evaluate after each epoch
             save_total_limit=1,  # Keep only the best model
             load_best_model_at_end=True,  # ✅ Load the best model after training
-            metric_for_best_model="eval_hotpotqa-dev_cosine_ndcg@10",  # ✅ Use validation loss to determine the best model
+            metric_for_best_model="eval_hotpotqa-dev_energy_distance_ndcg@10",  # ✅ Use validation loss to determine the best model
             greater_is_better=True,  # ✅ Higher ndcg is better
         )
 
