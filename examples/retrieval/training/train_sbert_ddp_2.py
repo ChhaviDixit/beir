@@ -34,7 +34,7 @@ print(torch.__version__)
 
 # ** Paths **
 model_name = "snowflake-arctic-embed-m-v1.5_ED"
-save_dir = os.path.join(pathlib.Path(__file__).parent.absolute(), "output", f"{model_name}-hotpotqa-lr1e-5-epochs10-temperature20_full_dev")
+save_dir = os.path.join(pathlib.Path(__file__).parent.absolute(), "output", f"{model_name}-hotpotqa-lr3e-5-epochs10-temperature20_full_dev")
 os.makedirs(save_dir, exist_ok=True)
 
 # ** Load dataset **
@@ -57,9 +57,14 @@ for qid, pos_ids in qrels.items():
 model = SentenceTransformer("Snowflake/snowflake-arctic-embed-m-v1.5")
 model.to(device)
 
+print(model.similarity)
+
 # ** Wrap in DDP if needed **
 if torch.cuda.device_count() > 1:
     model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[local_rank], output_device=local_rank, find_unused_parameters=False)
+
+print("Model device:", model.device)
+
 
 # Create tokenizing dataset
 #train_dataset = SentenceTransformerDataset(train_examples, model.module)  # DDP wraps model
@@ -68,8 +73,8 @@ train_dataset = Dataset.from_dict({k: [d[k] for d in train_data] for k in train_
 #train_dataset = train_examples
 
 # ** Create DDP Sampler **
-train_sampler = DistributedSampler(train_dataset, num_replicas=dist.get_world_size(), rank=local_rank, shuffle=True)
-train_dataloader = DataLoader(train_dataset, batch_size=16, sampler=train_sampler)
+#train_sampler = DistributedSampler(train_dataset, num_replicas=dist.get_world_size(), rank=local_rank, shuffle=True)
+#train_dataloader = DataLoader(train_dataset, batch_size=16, sampler=train_sampler)
 
 
 # ** Training Args **
@@ -77,9 +82,9 @@ training_args = SentenceTransformerTrainingArguments(
     output_dir=save_dir,
     num_train_epochs=10,
     per_device_train_batch_size=16,
-    learning_rate=1e-5,
+    learning_rate=3e-5,
     warmup_steps=int(len(train_dataset) * 10 / 16 * 0.1),
-    logging_steps=10,
+    logging_steps=1,
     save_strategy="epoch",
     evaluation_strategy="no",
     save_total_limit=10,
@@ -97,6 +102,7 @@ trainer = SentenceTransformerTrainer(
 )
 
 #torch.autograd.set_detect_anomaly(True)
+
 
 trainer.train()
 

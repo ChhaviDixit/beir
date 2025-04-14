@@ -99,7 +99,7 @@ def subset_dev_set(queries, qrels, corpus, subset_fraction=0.2, seed=42):
 # SentenceTransformer model setup
 #model_name = "distilbert-base-uncased_CosSim"
 #model = SentenceTransformer("distilbert-base-uncased")
-model_name = "snowflake-arctic-embed-m-v1.5_CosSim"
+model_name = "snowflake-arctic-embed-m-v1.5_ED"
 model = SentenceTransformer("Snowflake/snowflake-arctic-embed-m-v1.5")
 
 model.to('cuda')
@@ -118,8 +118,8 @@ ir_evaluator = retriever.load_ir_evaluator(dev_corpus, dev_queries, dev_qrels)
 # Hyperparameter optimization setup
 #learning_rates = [1e-5, 2e-5, 4e-5]
 #epochs_list = [1, 3, 5]
-learning_rates = [1e-5]
-epochs_list = [10]
+learning_rates = [2e-5]
+epochs_list = [1]
 
 
 
@@ -166,7 +166,7 @@ for lr in learning_rates:
         # Train the model with the given training objective
         retriever.fit(
             train_objectives=[(train_dataloader, train_loss)],
-            evaluator=ir_evaluator,
+            #evaluator=ir_evaluator,
             epochs=num_epochs,
             output_path=model_save_path,
             optimizer_params={"lr": lr},

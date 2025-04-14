@@ -49,12 +49,12 @@ dev_dataset = Dataset.from_list(dev_data)  # Convert to Hugging Face Dataset
 # SentenceTransformer model setup
 #model_name = "distilbert-base-uncased_ED"
 #model = SentenceTransformer("distilbert-base-uncased")
-model_name = "snowflake-arctic-embed-m-v1.5_ED"
+#model_name = "snowflake-arctic-embed-m-v1.5_ED"
 #model = SentenceTransformer("Snowflake/snowflake-arctic-embed-m-v1.5")
-#model_name = "distilbert-base-uncased_CosSim_test"
+model_name = "snowflake-arctic-embed-m-v1.5_CosSim"
 #model = SentenceTransformer("distilbert-base-uncased")
 #model_save_path = os.path.join(pathlib.Path(__file__).parent.absolute(), "output", f"{model_name}-hotpotqa-lr{lr}-epochs{num_epochs}-temperature20_full_dev")
-model_save_path = os.path.join(pathlib.Path(__file__).parent.absolute(), "output", f"{model_name}-hotpotqa-lr1e-5-epochs10-temperature20_full_dev")
+model_save_path = os.path.join(pathlib.Path(__file__).parent.absolute(), "output", f"{model_name}-hotpotqa-lr2e-5-epochs10-temperature20_full_dev")
 trainer_state_path = os.path.join(save_dir, "trainer_state.json")
 os.makedirs(model_save_path, exist_ok=True)
 if os.path.exists(model_save_path):
@@ -106,8 +106,8 @@ ir_evaluator = InformationRetrievalEvaluator(
 
 
 # Hyperparameter setup
-learning_rates = [1e-5]
-epochs_list = [10]
+learning_rates = [2e-5]
+epochs_list = [1]
 
 # Custom callback to print loss during training
 class PrintLossCallback(TrainerCallback):

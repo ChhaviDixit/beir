@@ -70,7 +70,7 @@ class BestModelCallback(TrainerCallback):
 # ** Training Arguments ** Uncomment arguments to use ir_evaluator after each epoch
 training_args = SentenceTransformerTrainingArguments(
     output_dir=save_dir,
-    num_train_epochs=1,
+    num_train_epochs=10,
     per_device_train_batch_size=16,
     learning_rate=1e-5,
     warmup_steps=int(len(train_dataset) * 10 / 16 * 0.1),
@@ -89,7 +89,7 @@ trainer = SentenceTransformerTrainer(
     model=model,
     args=training_args,
     train_dataset=train_dataset,
-    eval_dataset=None,
+    #eval_dataset=dev_dataset,
     loss=losses.MultipleNegativesRankingLoss(model=model),
     #evaluator=ir_evaluator,
     callbacks=[]

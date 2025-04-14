@@ -1,4 +1,4 @@
-from sentence_transformers import SentenceTransformer, SentencesDataset, datasets
+from sentence_transformers import SentenceTransformer, SentencesDataset, datasets, fit_mixin
 from sentence_transformers.evaluation import SentenceEvaluator, SequentialEvaluator, InformationRetrievalEvaluator
 from sentence_transformers.readers import InputExample
 from transformers import AdamW
@@ -131,7 +131,7 @@ class TrainRetriever:
         # Train the model
         logger.info("Starting to Train...")
 
-        self.model.fit(train_objectives=train_objectives,
+        self.model.old_fit(train_objectives=train_objectives,
                 evaluator=evaluator,
                 epochs=epochs,
                 steps_per_epoch=steps_per_epoch,
