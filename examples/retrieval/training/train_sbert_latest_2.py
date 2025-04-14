@@ -80,7 +80,7 @@ training_args = SentenceTransformerTrainingArguments(
     evaluation_strategy="no",
     save_total_limit=2,
     #load_best_model_at_end=True,
-    #metric_for_best_model="eval_hotpotqa-dev_ndcg@10",
+    #metric_for_best_model="eval_hotpotqa-dev_energy_distance_ndcg@10",
     #greater_is_better=True,
 )
 
