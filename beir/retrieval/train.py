@@ -131,7 +131,7 @@ class TrainRetriever:
         # Train the model
         logger.info("Starting to Train...")
 
-        self.model.old_fit(train_objectives=train_objectives,
+        self.model.fit(train_objectives=train_objectives,
                 evaluator=evaluator,
                 epochs=epochs,
                 steps_per_epoch=steps_per_epoch,
