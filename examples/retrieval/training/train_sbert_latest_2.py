@@ -20,9 +20,10 @@ print(torch.cuda.current_device())  # Prints the current device index
 
 
 # Define paths
-model_name = "snowflake-arctic-embed-m-v1.5_ED"
+# model_name = "snowflake-arctic-embed-m-v1.5_ED"
+model_name = "distilbert-base-uncased"
 #model_name = "snowflake-arctic-embed-m-v1.5_CosSim"
-model = SentenceTransformer("Snowflake/snowflake-arctic-embed-m-v1.5")
+model = SentenceTransformer(model_name)
 save_dir = os.path.join(pathlib.Path(__file__).parent.absolute(), "output", f"{model_name}-hotpotqa-lr1e-5-epochs10-temperature20_full_dev") #Make sure LR and temperature (scale) are correct
 os.makedirs(save_dir, exist_ok=True)
 
@@ -76,12 +77,12 @@ training_args = SentenceTransformerTrainingArguments(
     warmup_steps=int(len(train_dataset) * 10 / 16 * 0.1),
     logging_steps=1, 
     save_strategy="epoch",
-    #evaluation_strategy="epoch",
-    evaluation_strategy="no",
+    eval_strategy="epoch",
+    # eval_strategy="no",
     save_total_limit=2,
-    #load_best_model_at_end=True,
-    #metric_for_best_model="eval_hotpotqa-dev_energy_distance_ndcg@10",
-    #greater_is_better=True,
+    load_best_model_at_end=True,
+    metric_for_best_model="eval_hotpotqa-dev_js_div_ndcg@10",
+    greater_is_better=True,
 )
 
 # ** Resume Trainer from Last Epoch ** set eval dataset to use ir_evaluator and uncomment evaluator argument
