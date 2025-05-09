@@ -5,21 +5,26 @@
 #SBATCH --gres=gpu:1                # Number of GPUs per node
 #SBATCH --ntasks-per-node=1         # Number of processes per node (should be equal to the number of GPUs per node)
 #SBATCH --time=6:00:00
+#SBATCH --mem-per-cpu=16gb	# The memory the job will use per cpu core.
 #SBATCH --qos=npl-48hr             # Requested QoS IMPORTANT: REPLACE WITH SBATCH --account=edu if using Terremoto cluster
-#SBATCH --output=output_snowflake-arctic-embed-m-v1.5_ED-hotpotqa-lr2e-5-epochs10-temperature20_full_dev_1GPU.out      # Standard output log file
-#SBATCH --error=error_snowflake-arctic-embed-m-v1.5_ED-hotpotqa-lr2e-5-epochs10-temperature20_full_dev_1GPU.out        # Standard error log file
+#SBATCH --output=output_distilbert-base-uncased-hotpotqa-lr2e-5-epochs10-temperature20_full_dev_1GPU.out      # Standard output log file
+#SBATCH --error=error_distilbert-base-uncased-hotpotqa-lr2e-5-epochs10-temperature20_full_dev_1GPU.out        # Standard error log file
 
 # Terremoto Cluster
 #module load anaconda
 #module load cuda92/toolkit
 
+module purge
+
 # RPI Cluster
-module load gcc/8.4.0/1
-module load cuda/12.1
+module load gcc/14.1.0
+module load cuda
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 source ~/.bashrc
-source ~/barn/miniconda3x86/etc/profile.d/conda.sh  # Adjust path if needed (RPI Cluster only)
+# source ~/barn/miniconda3x86/etc/profile.d/conda.sh  # Adjust path if needed (RPI Cluster only)
+source /insomnia001/depts/edu/COMSE6998/cd3496/miniconda3/etc/profile.d/conda.sh
+
 
 conda activate myenv39           # Activate the virtual environment for ED model training
 #conda activate testenv          # Activate the virtual environment for CosSim model training
@@ -40,7 +45,8 @@ export CUDA_VISIBLE_DEVICES=0  # Only use GPU 0
 
 #srun python /gpfs/u/home/MSSV/MSSVntsn/barn/beir/examples/retrieval/training/train_sbert4.py
 #srun python /gpfs/u/home/MSSV/MSSVntsn/barn/beir/examples/retrieval/training/train_sbert_latest.py
-srun python /gpfs/u/home/MSSV/MSSVntsn/barn/beir/examples/retrieval/training/train_sbert_latest_2.py
+# srun python /gpfs/u/home/MSSV/MSSVntsn/barn/beir/examples/retrieval/training/train_sbert_latest_2.py
+srun python /insomnia001/home/cd3496/beir/examples/retrieval/training/train_sbert_latest_2.py
 nvidia-smi
 # End of script
 
