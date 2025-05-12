@@ -41,6 +41,14 @@ train_dataset = Dataset.from_dict({k: [d[k] for d in train_data] for k in train_
 dev_data = [{"doc_id": doc_id, "text": doc["text"]} for doc_id, doc in dev_corpus.items()]
 dev_dataset = Dataset.from_list(dev_data)  # Convert to Hugging Face Dataset
 
+# validation dataset
+val_data = [
+    {"query": dev_queries[qid], "positive": dev_corpus[pos_id]["text"]}
+    for qid, pos_doc_ids in dev_qrels.items()
+    for pos_id in pos_doc_ids
+]
+val_dataset = Dataset.from_dict({k: [d[k] for d in val_data] for k in val_data[0]})
+
 
 # Define evaluator
 ir_evaluator = InformationRetrievalEvaluator(
@@ -81,7 +89,7 @@ training_args = SentenceTransformerTrainingArguments(
     # eval_strategy="no",
     save_total_limit=2,
     load_best_model_at_end=True,
-    metric_for_best_model="eval_hotpotqa-dev_js_div_ndcg@10",
+    # metric_for_best_model="eval_hotpotqa-dev_js_div_ndcg@10",
     greater_is_better=True,
 )
 
@@ -90,9 +98,9 @@ trainer = SentenceTransformerTrainer(
     model=model,
     args=training_args,
     train_dataset=train_dataset,
-    #eval_dataset=dev_dataset,
+    eval_dataset=val_dataset,
     loss=losses.MultipleNegativesRankingLoss(model=model),
-    #evaluator=ir_evaluator,
+    evaluator=ir_evaluator,
     callbacks=[]
 )
 
