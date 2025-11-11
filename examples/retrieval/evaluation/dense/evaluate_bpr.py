@@ -97,7 +97,7 @@ if os.path.isdir(input_dir):
 # Please Note, Reranking here is done with a bi-encoder which is quite faster compared to cross-encoders.
 # Reranking is advised by the original paper as its quite fast, efficient and leads to decent performances.
 
-score_function = "dot" # or cos_sim for cosine similarity
+score_function = "js_divergence" # or cos_sim for cosine similarity
 retriever = EvaluateRetrieval(faiss_search, score_function=score_function)
 
 rerank = True                       # False would only retrieve top-k documents based on hamming distance.

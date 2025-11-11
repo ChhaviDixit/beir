@@ -7,8 +7,8 @@
 #SBATCH --time=6:00:00
 #SBATCH --mem-per-cpu=16gb	# The memory the job will use per cpu core.
 #SBATCH --qos=npl-48hr             # Requested QoS IMPORTANT: REPLACE WITH SBATCH --account=edu if using Terremoto cluster
-#SBATCH --output=output_distilbert-base-uncased-hotpotqa-lr2e-5-epochs10-temperature20_full_dev_1GPU.out      # Standard output log file
-#SBATCH --error=error_distilbert-base-uncased-hotpotqa-lr2e-5-epochs10-temperature20_full_dev_1GPU.out        # Standard error log file
+#SBATCH --output=output_distilbert-base-uncased-dbpedia-entity-lr2e-5-epochs10-temperature20_full_dev_1GPU.out      # Standard output log file
+#SBATCH --error=error_distilbert-base-uncased-dbpedia-entity-lr2e-5-epochs10-temperature20_full_dev_1GPU.out        # Standard error log file
 
 # Terremoto Cluster
 #module load anaconda
@@ -26,7 +26,7 @@ source ~/.bashrc
 source /insomnia001/depts/edu/COMSE6998/cd3496/miniconda3/etc/profile.d/conda.sh
 
 
-conda activate myenv39           # Activate the virtual environment for ED model training
+conda activate myenvED           # Activate the virtual environment for ED model training
 #conda activate testenv          # Activate the virtual environment for CosSim model training
 
 nvidia-smi
@@ -46,7 +46,7 @@ export CUDA_VISIBLE_DEVICES=0  # Only use GPU 0
 #srun python /gpfs/u/home/MSSV/MSSVntsn/barn/beir/examples/retrieval/training/train_sbert4.py
 #srun python /gpfs/u/home/MSSV/MSSVntsn/barn/beir/examples/retrieval/training/train_sbert_latest.py
 # srun python /gpfs/u/home/MSSV/MSSVntsn/barn/beir/examples/retrieval/training/train_sbert_latest_2.py
-srun python /insomnia001/home/cd3496/beir/examples/retrieval/training/train_sbert_latest_2.py
+srun python /insomnia001/home/cd3496/beir/examples/retrieval/training/train_sbert_latest_new.py
 nvidia-smi
 # End of script
 

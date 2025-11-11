@@ -79,7 +79,7 @@ train_samples = retriever.load_train_triplets(triplets=triplets)
 train_dataloader = retriever.prepare_train_triplets(train_samples)
 
 #### Training SBERT with cosine-product
-train_loss = losses.MultipleNegativesRankingLoss(model=retriever.model)
+train_loss = losses.MultipleNegativesRankingLoss(model=retriever.model, similarity_fct=util.js_div)
 # #### training SBERT with dot-product
 # # train_loss = losses.MultipleNegativesRankingLoss(model=retriever.model, similarity_fct=util.dot_score)
 

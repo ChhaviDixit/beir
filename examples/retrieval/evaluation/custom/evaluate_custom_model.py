@@ -45,7 +45,7 @@ corpus, queries, qrels = GenericDataLoader(data_folder=data_path).load(split="te
 #### Provide your custom model class name --> HERE
 model = DRES(YourCustomModel(model_path="your-custom-model-path"))
 
-retriever = EvaluateRetrieval(model, score_function="cos_sim") # or "dot" if you wish dot-product
+retriever = EvaluateRetrieval(model, score_function="js_divergence") # or "dot" if you wish dot-product
 
 #### Retrieve dense results (format of results is identical to qrels)
 results = retriever.retrieve(corpus, queries)
